@@ -68,26 +68,6 @@ if st.button("Submit question", use_container_width=True):
                 ):
                     st.caption(f"Validation: {payload['validation_reason']}")
 
-                meta_cols = st.columns(3)
-                with meta_cols[0]:
-                    st.markdown(f"**Retrieval used**: {payload.get('retrieval_used', False)}")
-                with meta_cols[1]:
-                    st.markdown(f"**Answer format**: {payload.get('answer_format') or '-'}")
-                with meta_cols[2]:
-                    if payload.get("insufficient_evidence"):
-                        st.markdown("**Evidence**: insufficient")
-                    elif payload.get("needs_clarification"):
-                        st.markdown("**Status**: clarification needed")
-                    elif payload.get("coverage_sufficient") is False:
-                        st.markdown("**Coverage**: incomplete")
-                    elif payload.get("refusal_reason"):
-                        st.markdown("**Status**: refused")
-                    else:
-                        st.markdown("**Evidence**: OK")
-
-                if payload.get("rewritten_query"):
-                    st.caption(f"Rewritten query: {payload['rewritten_query']}")
-
                 if payload.get("refusal_reason"):
                     st.warning(payload["refusal_reason"])
 

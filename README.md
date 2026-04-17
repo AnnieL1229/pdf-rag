@@ -1,6 +1,6 @@
 # PDF RAG
 
-Upload PDFs, ask questions in plain language, and get answers grounded in those documents—with **citations** (file and page). Hybrid search (vectors + keywords) and indexes live locally under **`data/`**; **Mistral** powers routing, coverage checks, and answer text when **`MISTRAL_API_KEY`** is set. Use the **FastAPI** server, the **Streamlit** UI, or any HTTP client.
+Upload PDFs, ask questions in plain language, and get answers grounded in those documents with **citations** (file and page). Hybrid search (vectors + keywords) and indexes live locally under **`data/`**; **Mistral** powers routing, coverage checks, and answer text when **`MISTRAL_API_KEY`** is set. Use the **FastAPI** server, the **Streamlit** UI, or any HTTP client.
 
 Section 1 diagrams the pipeline; sections 2–6 explain each stage, then API, UI, how to run, limitations, and repo layout.
 
@@ -89,12 +89,13 @@ Each chunk stores:
 
 Handled by **`QueryProcessor`** (`query_processor.py`).
 
-**With Mistral** (when `MISTRAL_API_KEY` is set), the model returns JSON:
+**With Mistral** (`MISTRAL_API_KEY` set), the model returns JSON:
 
-- `route` — greeting, help, retrieval, refusal, etc.
-- `needs_retrieval`
-- `answer_format`
-- `rewritten_query` — search-optimized wording
+- `route` — `greeting` | `gratitude` | `help` | `retrieval` | `refusal`
+- `needs_retrieval` — whether to search indexed PDFs
+- `answer_format` — `short_direct` | `list` | `table` | `default_explanatory`
+- `rewritten_query` — keyword-style query for search when retrieval is needed; otherwise empty
+- `refusal_reason` (optional) — when `route` is `refusal`
 
 **Fallback** (no API / invalid JSON / failed call):
 
