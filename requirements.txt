@@ -1,0 +1,13 @@
+fastapi
+uvicorn[standard]
+python-multipart
+PyMuPDF
+sentence-transformers
+faiss-cpu
+rank-bm25
+mistralai
+streamlit
+requests
+python-dotenv
+pydantic-settings
+pytest
