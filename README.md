@@ -119,33 +119,58 @@ The Streamlit client in **`ui/streamlit_app.py`** lets you point at an API base 
 
 ## 9. How to run
 
+**Prerequisites:** Python 3.10+ recommended, a **Mistral API key** (for `/query` answers; routing and generation call Mistral). First time you embed or ingest, **sentence-transformers** downloads the embedding model from the network (one-time, may take a minute).
+
+**1. Clone and enter the repo** (replace the URL with yours):
+
 ```bash
-cd "/path/to/StackAI - RAG"
-python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-cp .env.example .env
-# Add MISTRAL_API_KEY to .env
+git clone https://github.com/YOUR_USER/YOUR_REPO.git
+cd YOUR_REPO
 ```
 
-Start the API:
+**2. Virtual environment and dependencies** (from the **repository root**, the folder that contains `app/` and `requirements.txt`):
+
+```bash
+python -m venv .venv
+source .venv/bin/activate          # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+**3. Environment file**
+
+```bash
+cp .env.example .env
+# Edit .env: set MISTRAL_API_KEY=... (and optionally MISTRAL_CHAT_MODEL)
+```
+
+**4. Start the API** (still from repo root):
 
 ```bash
 uvicorn app.main:app --reload
-# http://127.0.0.1:8000
 ```
 
-In another terminal, start the UI:
+Open `http://127.0.0.1:8000` — you should see a small JSON message from `GET /`.
+
+**5. Start the UI** (second terminal, same `venv` and repo root):
 
 ```bash
 streamlit run ui/streamlit_app.py
-# http://127.0.0.1:8501
 ```
 
-Optional smoke checks:
+Use the UI to upload at least one PDF, then ask a question—or call `POST /ingest` and `POST /query` yourself.
+
+**Checks**
 
 ```bash
 pytest
-curl -s -X POST "http://127.0.0.1:8000/ingest" -F "files=@./sample.pdf"
+```
+
+The repo includes **`pyproject.toml`** so `pytest` resolves the `app` package without setting `PYTHONPATH` manually.
+
+**curl** (replace `./your.pdf` with a real PDF path on your machine; ingest before query):
+
+```bash
+curl -s -X POST "http://127.0.0.1:8000/ingest" -F "files=@./your.pdf"
 curl -s -X POST "http://127.0.0.1:8000/query" \
   -H "Content-Type: application/json" \
   -d '{"question":"What are the main terms in section 3?"}'
@@ -177,5 +202,6 @@ ui/streamlit_app.py
 tests/                    # test_*.py
 data/                     # chunks.json, faiss.index (after ingest)
 requirements.txt
+pyproject.toml            # pytest pythonpath so tests find app
 .env.example
 ```
